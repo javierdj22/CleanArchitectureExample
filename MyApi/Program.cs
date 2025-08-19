@@ -7,6 +7,7 @@ using System.Data;
 using MyApp.Application.Services;
 using MyApp.Domain.Repositories;
 using MyApp.Infrastructure.Repositories;
+using System.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,11 +97,18 @@ builder.Services.AddCors(options =>
 });
 
 // 🔹 Registrar servicios
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IProductoService, ProductoService>();
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+//builder.Services.AddScoped<IAuthService, AuthService>();
+//builder.Services.AddScoped<ITokenService, TokenService>();
+//builder.Services.AddScoped<IProductoService, ProductoService>();
+//builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+//builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddSingleton<IDbConnection>(sp =>
+    new NpgsqlConnection("Host=localhost;Database=mi_basededatos;Username=admin;Password=admin123"));
+builder.Services.AddSingleton<IAuthService, AuthService>();
+builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddSingleton<IProductoService, ProductoService>();
+builder.Services.AddSingleton<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddSingleton<IProductoRepository, ProductoRepository>();
 
 // 🔹 Configuración de Swagger
 builder.Services.AddEndpointsApiExplorer();

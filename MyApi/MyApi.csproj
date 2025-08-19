@@ -20,6 +20,7 @@
 
     <!-- Paquete actualizado a la versión 7.0.0 para .NET 8 -->
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>

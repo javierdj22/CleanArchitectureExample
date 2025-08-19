@@ -31,7 +31,7 @@ namespace MyApp.Application.Services
                 issuer: "YourAppName",
                 audience: "YourAppName",
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: creds
             );
 
