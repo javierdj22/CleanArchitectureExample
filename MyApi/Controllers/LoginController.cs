@@ -25,22 +25,13 @@ namespace MyApp.API.Controllers
                 return BadRequest(new { message = "Username y password son requeridos." });
             }
 
-            try
-            {
-                // Espera la tarea asincrónica para obtener el token
-                string token = await _authService.Login(request.Username, request.PasswordHash);
+            string token = await _authService.Login(request.Username, request.PasswordHash);
 
-                if (string.IsNullOrEmpty(token))
-                {
-                    return Unauthorized(new { message = "Usuario o contraseña inválidos." });
-                }
+            if (string.IsNullOrEmpty(token)) {
+                return Unauthorized(new { message = "Usuario o contraseña inválidos." });
+            }
 
-                return Ok(new { token });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Error al autenticar el usuario.", detail = ex.Message });
-            }
+            return Ok(new { token });
         }
 
         // Registro de Usuario
@@ -51,49 +42,29 @@ namespace MyApp.API.Controllers
             {
                 return BadRequest(new { message = "Username y password son requeridos." });
             }
+            var createdUser = await _authService.RegisterAsync(request);
 
-            try
-            {
-                var createdUser = await _authService.RegisterAsync(request);
-
-                if (createdUser == null)
-                {
-                    return BadRequest(new { message = "No se pudo registrar el usuario." });
-                }
-
-                var userResponse = new
-                {
-                    createdUser.Id,
-                    createdUser.Username
-                };
-
-                return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, userResponse);
+            if (createdUser == null) {
+                return BadRequest(new { message = "No se pudo registrar el usuario." });
             }
-            catch (Exception ex)
+            var userResponse = new
             {
-                return StatusCode(500, new { message = "Error al registrar el usuario.", detail = ex.Message });
-            }
+                createdUser.Id,
+                createdUser.Username
+            };
+            return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, userResponse);
         }
 
         // Obtener usuario por ID
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var user = await _authService.GetUserByIdAsync(id);
-
-                if (user == null)
-                {
-                    return NotFound(new { message = "Usuario no encontrado." });
-                }
-
-                return Ok(user); // Devuelve el usuario
+            var user = await _authService.GetUserByIdAsync(id);
+            if (user == null) {
+                return NotFound(new { message = "Usuario no encontrado." });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Error al obtener el usuario.", detail = ex.Message });
-            }
+
+            return Ok(user); 
         }
     }
 }

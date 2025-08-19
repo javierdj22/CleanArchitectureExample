@@ -1,7 +1,5 @@
 ﻿using MyApp.Domain.Entities;
 using MyApp.Domain.Repositories;
-using System;
-using System.Threading.Tasks;
 
 namespace MyApp.Application.Services
 {
@@ -16,17 +14,15 @@ namespace MyApp.Application.Services
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         }
 
-        // Login: Verifica las credenciales y genera un token
+        // Lister: lista y valida un usuario
         public async Task<string> Login(string username, string passwordHash)
         {
-            // Espera el resultado de la tarea asincrónica
+            passwordHash = EncodeBase64(passwordHash);
             var user = await _usuarioRepository.GetByUsernameAndPassword(username, passwordHash);
 
-            // Si el usuario no se encuentra o las credenciales son incorrectas
             if (user == null)
                 return null;
 
-            // Genera el token después de haber obtenido al usuario
             return _tokenService.GenerateToken(user);
         }
 
@@ -36,6 +32,7 @@ namespace MyApp.Application.Services
             if (await _usuarioRepository.ExistsAsync(usuario.Username))
                 return null;
 
+            usuario.PasswordHash = EncodeBase64(usuario.PasswordHash);
             return await _usuarioRepository.AddAsync(usuario);
         }
 
@@ -43,6 +40,12 @@ namespace MyApp.Application.Services
         public async Task<Usuario> GetUserByIdAsync(int id)
         {
             return await _usuarioRepository.GetByIdAsync(id);
+        }
+
+        private static string EncodeBase64(string plainText)
+        {
+            byte[] plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
         }
     }
 }

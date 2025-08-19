@@ -19,19 +19,11 @@ public class ProductoRepository : IProductoRepository
 
     public async Task<IEnumerable<Producto>> GetProductosAsync()
     {
-        try
-        {
-            using var scope = _serviceProvider.CreateScope();
-            var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
+        using var scope = _serviceProvider.CreateScope();
+        var connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
 
-            var sql = "SELECT * FROM productos";
-            return await connection.QueryAsync<Producto>(sql);
-        }
-        catch (Exception ex)
-        {
-            // Aquí puedes registrar el error en un log antes de relanzar
-            throw new ApplicationException("Error al obtener los productos", ex);
-        }
+        var sql = "SELECT * FROM productos";
+        return await connection.QueryAsync<Producto>(sql);
     }
 
 
