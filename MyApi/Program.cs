@@ -36,7 +36,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // 🔹 Middleware
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 // 🔹 Manejo global de errores
 app.UseMiddleware<ExceptionMiddleware>();
